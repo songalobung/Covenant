@@ -12,7 +12,7 @@
 
 **Covenant** is an institutional-grade quantitative framework and CLI designed for sovereign credit desks, macro funds, rating agencies, and official sector advisors to evaluate sovereign distress probabilities, forecast debt restructuring haircuts, model time-to-resolution survival curves, and compute bond fair-value pricing gaps.
 
-[Key Features](#key-features) • [Quickstart](#quickstart) • [CLI Reference](#cli-reference) • [Methodology](#methodology) • [Data Schemas](#data-schemas--ingestion) • [Python API](#python-api) • [License](#license)
+[Quickstart](#quickstart) • [CLI Reference](#cli-reference) • [Methodology](#methodology) • [Data Schemas](#data-schemas--ingestion) • [Add Countries & Real Data](#how-to-add-new-countries--real-data) • [Python API](#python-api) • [License](#license)
 
 ---
 
@@ -307,6 +307,99 @@ Covenant enforces strict schema validation via Pydantic and Pandera-style constr
 | `resolution_date` | YYYY-MM-DD (nullable) | Date of final debt exchange (`NA` if ongoing) |
 | `haircut_npv_pct` | float (nullable) | Market Net Present Value haircut % (`NA` if ongoing) |
 | `event_type` | enum | `default`, `restructuring`, `distressed_exchange` |
+
+---
+
+## How to Add New Countries & Real Data
+
+Covenant is completely **country-agnostic**. You can add any sovereign issuer (e.g. Senegal, Gabon, South Africa, Pakistan, Sri Lanka, Ecuador, etc.) by appending rows to the four CSV files in `data/`.
+
+### 1. Where to Source Real Data (Free & Authoritative)
+
+| Metric | Source / Database | Direct URL / Access Method | Notes & Guidance |
+| :--- | :--- | :--- | :--- |
+| **`eurobond_spread_bps`** | **JPMorgan EMBI Global Diversified** or **World Government Bonds** | [worldgovernmentbonds.com](http://www.worldgovernmentbonds.com/) or Bloomberg `[TICKER] Govt OAS` | Secondary market spread in basis points over benchmark US Treasuries. If tracking a bond yield, subtract the equivalent US Treasury yield: `(Yield - UST_Yield) * 100`. |
+| **`external_debt_pct_gdp`** | **World Bank International Debt Statistics (IDS)** | [datatopics.worldbank.org/debt/ids/](https://datatopics.worldbank.org/debt/ids/) | Look up "External debt stocks (% of GNI or GDP)" or IMF Article IV Staff Report Table: *Selected Economic and Financial Indicators*. |
+| **`debt_service_pct_revenue`** | **IMF Debt Sustainability Analyses (DSA)** | [imf.org/en/Publications/CR](https://www.imf.org/en/Publications/CR) | Ratio of total external public debt service (principal + interest) to total general government fiscal revenue excluding grants. |
+| **`reserves_months_imports`** | **National Central Bank Bulletins** or **IMF International Financial Statistics (IFS)** | Central Bank Monthly Statistical Bulletin | Gross international reserves divided by average monthly prospective imports of goods and services. |
+| **`fiscal_balance_pct_gdp`** | **IMF World Economic Outlook (WEO)** | [imf.org/en/Data](https://www.imf.org/en/Data) | Overall fiscal balance including grants as a % of nominal GDP. Negative for deficits (e.g., `-5.2`). |
+| **`current_account_pct_gdp`** | **IMF WEO Database** | [imf.org/en/Data](https://www.imf.org/en/Data) | Balance on current account as % of GDP. Negative for deficits (e.g., `-4.1`). |
+| **`fx_depreciation_12m_pct`** | **Central Bank Official Exchange Rates** or **FRED** | [fred.stlouisfed.org](https://fred.stlouisfed.org/) | 12-month rolling % depreciation against USD: `(FX_t / FX_{t-12} - 1) * 100`. Positive indicates local currency depreciation. |
+| **`inflation_pct`** | **National Bureau of Statistics / IMF WEO** | National Statistical Office monthly release | Year-on-year % change in headline Consumer Price Index (CPI). |
+| **`gdp_growth_pct`** | **IMF WEO / World Bank** | WEO database | Real annual GDP growth rate (constant prices, % change). |
+| **`imf_program`** | **IMF Financial Data Query Tool** | [imf.org/external/np/fin/tad/query.aspx](https://www.imf.org/external/np/fin/tad/query.aspx) | `1` if an active Extended Fund Facility (EFF), Extended Credit Facility (ECF), or Stand-By Arrangement (SBA) is in effect; `0` otherwise. |
+| **`imf_review_on_track`** | **IMF Executive Board Press Releases** | [imf.org](https://www.imf.org) | `1.0` if latest staff-level agreement / review was approved on schedule; `0.0` if review is delayed, stalled, or off-track; leave blank (`NA`) if no active program. |
+| **Upcoming Debt Service (`debt_calendar.csv`)** | **World Bank IDS / Sovereign Prospectuses** | World Bank IDS Debt Service Projections / Bond Indentures | Specific bond maturity dates, amounts in USD millions, and creditor classification (`eurobond`, `china_bilateral`, `paris_club`, `multilateral`, `commercial`, `other`). |
+| **Creditor Decomposition (`creditor_mix.csv`)** | **World Bank IDS / IMF Article IV** | IDS Table: *External Debt by Creditor* | Percentage distribution summing to ~1.0: `share_eurobond`, `share_china`, `share_paris_club`, `share_multilateral`, `share_other`, `share_domestic`. |
+| **Restructuring Episodes (`events.csv`)** | **Cruces & Trebesch (2013, 2021)** / **BoC-BoE Database** | [kiel-institut.de/cruces-trebesch](https://www.ifw-kiel.de/publications/kiel-working-papers/2021/sovereign-defaults-and-restructurings-database-update/) | Historical default dates, resolution dates, and Net Present Value haircut % calculated at 10% discount rate. |
+
+---
+
+### 2. Concrete Example: Adding Senegal
+
+Here is the exact step-by-step workflow to add **Senegal** to your Covenant instance:
+
+#### Step A. Add Monthly/Quarterly Macro Observations to `data/country_panel.csv`
+Open [data/country_panel.csv](data/country_panel.csv) and append your observations:
+
+```csv
+country,date,eurobond_spread_bps,external_debt_pct_gdp,debt_service_pct_revenue,reserves_months_imports,fiscal_balance_pct_gdp,current_account_pct_gdp,fx_depreciation_12m_pct,inflation_pct,gdp_growth_pct,imf_program,imf_review_on_track
+Senegal,2023-12-31,520.0,46.5,22.0,4.2,-4.9,-8.8,3.2,5.9,4.3,1,1.0
+Senegal,2024-06-30,460.0,48.0,24.5,4.0,-5.2,-7.5,-2.1,3.2,5.3,1,1.0
+Senegal,2024-09-30,485.0,52.0,26.0,3.8,-6.8,-7.1,-1.5,2.8,5.1,1,0.0
+```
+
+#### Step B. Add Debt Maturities to `data/debt_calendar.csv`
+Open [data/debt_calendar.csv](data/debt_calendar.csv) and record upcoming Eurobond and bilateral maturities:
+
+```csv
+country,date,instrument,amount_usd_m,creditor_type
+Senegal,2024-12-15,China Bilateral Exim Loan Service,95.0,china_bilateral
+Senegal,2026-07-30,Paris Club Rescheduled Bilateral,120.0,paris_club
+Senegal,2028-03-13,Eurobond 2028 6.250%,500.0,eurobond
+Senegal,2031-06-19,Eurobond 2031 6.750%,750.0,eurobond
+Senegal,2033-05-23,Eurobond 2033 5.375% (EUR 1000M),1080.0,eurobond
+Senegal,2037-02-02,Eurobond 2037 6.250%,1000.0,eurobond
+```
+
+#### Step C. Add Creditor Mix Breakdown to `data/creditor_mix.csv`
+Open [data/creditor_mix.csv](data/creditor_mix.csv) and add the creditor structure:
+
+```csv
+country,date,share_eurobond,share_china,share_paris_club,share_multilateral,share_other,share_domestic
+Senegal,2023-12-31,0.30,0.09,0.10,0.38,0.03,0.10
+Senegal,2024-09-30,0.31,0.09,0.09,0.38,0.03,0.10
+```
+
+#### Step D. (Optional) Add Historical Restructuring Events to `data/events.csv`
+If the sovereign has past defaults (e.g. Paris Club treatment or commercial debt exchange) or an ongoing debt treatment:
+
+```csv
+country,distress_start_date,resolution_date,haircut_npv_pct,event_type
+Senegal,2001-04-01,2004-06-30,12.5,restructuring
+```
+*(If the country has never defaulted on commercial debt, you can skip adding an event; Covenant will use the empirical global prior distribution).*
+
+---
+
+### 3. Validate & Test Your New Sovereign
+
+Run a quick test score to verify that all data fields are valid and the models calibrate cleanly:
+
+```powershell
+# 1. Score your new country immediately
+covenant score --country Senegal --date 2024-09-30 --scenario base
+
+# 2. Run stress tests
+covenant score --country Senegal --date 2024-09-30 --scenario fx_shock
+
+# 3. Generate boardroom-ready reports in both formats
+covenant report --country Senegal --out reports/senegal --format both
+```
+
+Covenant will instantly produce:
+- A structured Markdown dossier (`reports/senegal.md`)
+- A multi-sheet Microsoft Excel model (`reports/senegal.xlsx`) complete with 4 native charts.
 
 ---
 
