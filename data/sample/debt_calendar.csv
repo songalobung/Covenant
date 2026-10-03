@@ -1,0 +1,43 @@
+country,date,instrument,amount_usd_m,creditor_type
+Kenya,2024-06-24,Eurobond 2024 (Residual),560.0,eurobond
+Kenya,2024-12-15,China Exim SGR Semi-Annual Debt Service,350.0,china_bilateral
+Kenya,2025-06-15,China Exim SGR Semi-Annual Debt Service,360.0,china_bilateral
+Kenya,2025-10-30,TDB Syndicated Loan Tranche,450.0,commercial
+Kenya,2026-12-15,Paris Club Bilateral Amortization,280.0,paris_club
+Kenya,2027-05-15,Eurobond 2027 7.000%,900.0,eurobond
+Kenya,2028-02-28,Eurobond 2028 7.250%,1000.0,eurobond
+Kenya,2031-02-16,Eurobond 2031 9.750% (Amortizing),500.0,eurobond
+Kenya,2032-01-23,Eurobond 2032 8.000%,1000.0,eurobond
+Kenya,2034-05-22,Eurobond 2034 6.300%,1200.0,eurobond
+Kenya,2048-02-28,Eurobond 2048 8.250%,1000.0,eurobond
+Ghana,2024-12-31,Restructured Official Creditor Principal,250.0,paris_club
+Ghana,2025-06-30,China Bilateral Restructured Service,180.0,china_bilateral
+Ghana,2026-07-15,Multilateral IDA / AfDB Debt Service,420.0,multilateral
+Ghana,2029-01-15,New Eurobond Step-Up 2029 Tranche A,1400.0,eurobond
+Ghana,2035-07-15,New Eurobond Step-Up 2035 Tranche B,3100.0,eurobond
+Zambia,2024-12-31,OCC Bilateral Rescheduled Tranche,120.0,paris_club
+Zambia,2025-06-30,China Exim/CDB Restructured Debt Service,220.0,china_bilateral
+Zambia,2026-09-30,Multilateral Development Debt Service,180.0,multilateral
+Zambia,2033-06-30,New Eurobond 2033 Amortizing Bond A,1250.0,eurobond
+Zambia,2053-12-31,New Eurobond 2053 Contingent Bond B,1800.0,eurobond
+Ethiopia,2024-12-11,Eurobond 2024 6.625% (In Default),1000.0,eurobond
+Ethiopia,2025-06-30,China Exim Railway/Telecom Debt Service,380.0,china_bilateral
+Ethiopia,2026-03-31,Paris Club Suspended Debt Service,210.0,paris_club
+Nigeria,2025-07-12,Eurobond 2025 7.625%,1118.0,eurobond
+Nigeria,2026-03-15,Multilateral IDA/AfDB Service,450.0,multilateral
+Nigeria,2027-02-16,Eurobond 2027 6.500%,1500.0,eurobond
+Nigeria,2028-11-21,Eurobond 2028 7.143%,1250.0,eurobond
+Nigeria,2031-01-21,Eurobond 2031 8.747%,1250.0,eurobond
+Nigeria,2033-02-23,Eurobond 2033 7.375%,1500.0,eurobond
+Egypt,2025-05-29,Eurobond 2025 5.875%,1250.0,eurobond
+Egypt,2026-01-31,Eurobond 2026 7.500%,1750.0,eurobond
+Egypt,2027-01-31,Eurobond 2027 7.500%,2000.0,eurobond
+Egypt,2028-04-16,Eurobond 2028 6.588%,2000.0,eurobond
+Egypt,2031-02-16,Eurobond 2031 7.625%,2500.0,eurobond
+Angola,2025-11-12,Eurobond 2025 9.500%,1000.0,eurobond
+Angola,2026-06-30,China CDB Oil-Backed Facility Amortization,1400.0,china_bilateral
+Angola,2028-05-09,Eurobond 2028 8.250%,1750.0,eurobond
+Angola,2029-11-26,Eurobond 2029 9.375%,1250.0,eurobond
+Ivory Coast,2028-06-15,Eurobond EUR 2028 5.250%,1050.0,eurobond
+Ivory Coast,2032-03-22,Eurobond 2032 6.125%,1100.0,eurobond
+Ivory Coast,2037-01-30,Eurobond 2037 6.875%,1500.0,eurobond

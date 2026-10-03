@@ -1,0 +1,18 @@
+country,distress_start_date,resolution_date,haircut_npv_pct,event_type
+Zambia,2020-11-13,2024-03-25,38.5,default
+Ghana,2022-12-19,2024-06-24,37.0,default
+Ethiopia,2023-12-25,,,default
+Chad,2021-01-28,2022-11-11,14.0,restructuring
+Mozambique,2016-10-25,2019-10-30,27.5,default
+Republic of Congo,2016-06-30,2019-06-15,33.0,restructuring
+Seychelles,2008-10-06,2010-02-10,50.0,default
+Ivory Coast,2011-01-31,2011-11-15,4.5,distressed_exchange
+Sri Lanka,2022-04-12,2024-09-19,33.5,default
+Suriname,2020-10-28,2023-11-03,25.0,default
+Belize,2020-08-10,2021-11-05,45.0,distressed_exchange
+Ecuador,2020-04-08,2020-08-31,40.0,restructuring
+Argentina,2019-12-20,2020-09-04,45.5,restructuring
+Ukraine,2022-08-10,2024-08-28,37.0,restructuring
+Greece,2011-07-21,2012-03-09,65.0,distressed_exchange
+Argentina,2001-12-23,2005-06-02,73.0,default
+Ecuador,2008-11-15,2009-06-11,53.0,default

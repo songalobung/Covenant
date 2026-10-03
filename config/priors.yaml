@@ -1,0 +1,101 @@
+# ==============================================================================
+# Sovereign Distress & Restructuring Estimator - Model Priors
+#
+# NOTE: All values in this file are PRIORS derived from historical sovereign
+# debt literature (e.g., Cruces-Trebesch, Asonuma-Trebesch, IMF DSA guidelines).
+# NONE of these values are fitted values from the user dataset.
+# In small-sample sovereign restructuring estimation, priors provide regularization
+# and guard against separation/overfitting.
+# ==============================================================================
+
+distress_model:
+  # Expected feature signs:
+  # - log_spread: positive (higher spread indicates higher distress risk)
+  # - debt_service_pct_revenue: positive (heavier liquidity burden)
+  # - reserves_months_imports: negative (higher reserve buffer protects against external shock)
+  # - external_debt_pct_gdp: positive (higher leverage solvency risk)
+  # - fx_depreciation_12m_pct: positive (currency depreciation raises FX debt service burden)
+  # - fiscal_balance_pct_gdp: negative (deficits increase sovereign financing pressure)
+  # - non_paris_club_bilateral_share: positive (less coordinated restructuring creditor base)
+  # - refinancing_wall: positive (upcoming Eurobond maturities relative to reserves)
+  # - imf_program: negative (stabilizing liquidity and policy anchor)
+  # - imf_off_track_interaction: positive (broken program signals imminent shock)
+
+  12m_horizon:
+    # Prior intercept calibrated to baseline annual sovereign default incidence (~3-5% for emerging/frontier)
+    intercept: -3.20 # PRIOR, not a fitted value
+    coefficients:
+      log_spread: 0.85 # PRIOR, not a fitted value
+      debt_service_pct_revenue: 0.045 # PRIOR, not a fitted value
+      reserves_months_imports: -0.35 # PRIOR, not a fitted value
+      external_debt_pct_gdp: 0.030 # PRIOR, not a fitted value
+      fx_depreciation_12m_pct: 0.025 # PRIOR, not a fitted value
+      fiscal_balance_pct_gdp: -0.060 # PRIOR, not a fitted value
+      non_paris_club_bilateral_share: 0.70 # PRIOR, not a fitted value
+      refinancing_wall: 0.90 # PRIOR, not a fitted value
+      imf_program: -0.65 # PRIOR, not a fitted value
+      imf_off_track_interaction: 0.95 # PRIOR, not a fitted value
+
+  24m_horizon:
+    # Prior intercept calibrated to cumulative 24-month baseline distress rate (~6-9%)
+    intercept: -2.70 # PRIOR, not a fitted value
+    coefficients:
+      log_spread: 0.75 # PRIOR, not a fitted value
+      debt_service_pct_revenue: 0.040 # PRIOR, not a fitted value
+      reserves_months_imports: -0.30 # PRIOR, not a fitted value
+      external_debt_pct_gdp: 0.035 # PRIOR, not a fitted value
+      fx_depreciation_12m_pct: 0.020 # PRIOR, not a fitted value
+      fiscal_balance_pct_gdp: -0.050 # PRIOR, not a fitted value
+      non_paris_club_bilateral_share: 0.80 # PRIOR, not a fitted value
+      refinancing_wall: 1.10 # PRIOR, not a fitted value
+      imf_program: -0.55 # PRIOR, not a fitted value
+      imf_off_track_interaction: 0.85 # PRIOR, not a fitted value
+
+haircut_model:
+  # Cruces & Trebesch (2013) empirical median NPV haircut is ~37%, interquartile range ~20%-60%
+  baseline_alpha: 2.5 # PRIOR: Beta distribution shape param alpha (prior mean ~ 0.38)
+  baseline_beta: 4.0 # PRIOR: Beta distribution shape param beta
+  min_haircut_pct: 0.05 # PRIOR: Floor haircut in restructuring (5%)
+  max_haircut_pct: 0.90 # PRIOR: Cap haircut in restructuring (90%)
+  anchored_range:
+    low_pct: 20.0 # PRIOR, typical lower range benchmark
+    high_pct: 60.0 # PRIOR, typical upper range benchmark
+  coefficients:
+    external_debt_pct_gdp: 0.008 # PRIOR, not a fitted value (higher debt increases haircut need)
+    creditor_classes_count: 0.05 # PRIOR, not a fitted value (complexity increases friction)
+    china_share: 0.15 # PRIOR, not a fitted value (higher bilateral share increases haircut dispersion)
+    imf_program: -0.05 # PRIOR, not a fitted value (policy adjustment may slightly cushion haircut)
+    gdp_growth_pct: -0.015 # PRIOR, not a fitted value (stronger growth reduces required haircut)
+    prior_default_history: 0.08 # PRIOR, not a fitted value (serial defaulters face steeper concessions)
+
+resolution_model:
+  # Weibull Accelerated Failure Time (AFT) model for months from distress start to completion
+  # Historical mean ~24 to 36 months, longer with creditor coordination friction (Asonuma & Trebesch)
+  baseline_scale_months: 28.0 # PRIOR, scale parameter lambda in months
+  weibull_shape_gamma: 1.25 # PRIOR, shape parameter > 1 indicating positive duration dependence
+  coefficients:
+    creditor_classes_count: 0.18 # PRIOR, not a fitted value (more creditor classes slow resolution)
+    china_share: 0.22 # PRIOR, not a fitted value (Common Framework bilateral coordination delays)
+    imf_program_at_start: -0.15 # PRIOR, not a fitted value (accelerates IMF DSA & framework establishment)
+    bondholder_concentration: -0.10 # PRIOR, not a fitted value (concentrated creditors coordinate faster)
+
+market_recovery:
+  standard_recovery_assumption: 0.40 # PRIOR, standard market convention recovery rate (40%)
+
+scenarios:
+  base:
+    description: "Current baseline fundamentals"
+    overrides: {}
+  imf_program_lost:
+    description: "Loss of IMF program anchor and suspension of reviews"
+    overrides:
+      imf_program: 0
+      imf_review_on_track: 0
+  fx_shock:
+    description: "30% currency depreciation against USD"
+    overrides:
+      fx_depreciation_12m_pct: 30.0
+  spread_widening:
+    description: "500 bps widening in sovereign Eurobond spread"
+    overrides:
+      eurobond_spread_bps_delta: 500.0
